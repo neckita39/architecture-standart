@@ -1,0 +1,21 @@
+@startuml
+title Deposit Rates — Context Diagram (MVP)
+
+top to bottom direction
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(BO, "Сотрудник бек-офиса", "Заносит или обновляет ставки")
+Person(CallCenter, "Менеджер кол-центра", "Консультирует клиентов по ставкам")
+Person(PartnerCC, "Менеджер партнёрского кол-центра", "Получает ставки из файла")
+
+System(RatesService, "Сервис ставок", "Хранит, обновляет и экспортирует актуальные депозитные ставки")
+System(SalesSystem, "Сервис заявок", "Использует ставки при подаче заявки")
+System_Ext(PartnerSystem, "Система партнёрского кол-центра", "Не может интегрироваться по API, только принимает файл")
+
+Rel(BO, RatesService, "Обновляет ставки вручную")
+Rel(RatesService, CallCenter, "Отображает ставки в интерфейсе")
+Rel(RatesService, SalesSystem, "Передаёт актуальные ставки")
+Rel(RatesService, PartnerSystem, "Экспортирует CSV/XML файл")
+Rel(PartnerCC, PartnerSystem, "Считывает ставки из файла")
+
+@enduml

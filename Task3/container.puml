@@ -1,0 +1,41 @@
+@startuml
+title Deposit Opening — Container Diagram (MVP)
+
+top to bottom direction
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(Client, "Клиент", "Подаёт заявку через сайт или интернет-банк")
+
+System_Boundary(Website, "Сайт") {
+    Container(WebsiteSPA, "SPA", "React", "Интерфейс для подачи заявки")
+    Container(WebsiteBackend, "Backend", "PHP", "Обрабатывает и отправляет заявки в сервис заявок")
+}
+
+System_Boundary(InternetBank, "Интернет-банк") {
+    Container(IB_UI, "UI", "ASP.NET MVC", "Интерфейс для открытия депозита")
+    Container(IB_Controller, "Backend", ".NET Framework", "Обрабатывает действия пользователя")
+    Container(IB_Integration, "Интеграция с сервисом заявок", "HTTP", "Отправляет заявку")
+}
+
+System_Boundary(DepositService, "Сервис заявок") {
+    Container(DepositAPI, "REST API", "Spring Boot / .NET Core", "Принимает заявки с сайта и интернет-банка")
+    ContainerDb(DepositDB, "База заявок", "MS SQL", "Хранит информацию о поданных заявках")
+}
+
+System_Ext(SMSGateway, "СМС-шлюз", "Отправка уведомлений")
+System_Ext(ABS, "АБС", "Delphi + Oracle")
+
+Rel(Client, WebsiteSPA, "Подаёт заявку")
+Rel(WebsiteSPA, WebsiteBackend, "Отправляет данные")
+Rel(WebsiteBackend, DepositAPI, "POST заявки")
+
+Rel(Client, IB_UI, "Открывает депозит")
+Rel(IB_UI, IB_Controller, "Передаёт данные")
+Rel(IB_Controller, IB_Integration, "Вызывает сервис заявок")
+Rel(IB_Integration, DepositAPI, "POST заявки")
+
+Rel(DepositAPI, DepositDB, "Сохраняет заявку")
+Rel(DepositAPI, SMSGateway, "Отправляет СМС")
+Rel_Back(DepositAPI, ABS, "Данные попадают в АБС вручную")
+
+@enduml

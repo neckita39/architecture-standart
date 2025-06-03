@@ -1,0 +1,23 @@
+@startuml
+title Deposit Rates — Container Diagram (MVP)
+
+top to bottom direction
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+System_Boundary(RatesService, "Сервис ставок") {
+    Container(RatesAPI, "API ставок", "Java/.NET", "Позволяет получать и обновлять ставки")
+    Container(RatesUI, "UI ставок", "React", "Форма ввода и просмотра ставок")
+    ContainerDb(RatesDB, "База ставок", "MS SQL", "Хранит актуальные ставки")
+    Container(ExportJob, "Модуль экспорта", "Cron + CSV/XML", "Формирует файл для партнёрского кол-центра")
+}
+
+System_Ext(CallCenterApp, "Система кол-центра", "Внутренний React UI")
+System_Ext(PartnerSystem, "Партнёрская система", "Получает CSV/XML")
+
+Rel(CallCenterApp, RatesAPI, "Запрашивает ставки")
+Rel(RatesUI, RatesAPI, "Обновляет ставки")
+Rel(RatesAPI, RatesDB, "Чтение / запись")
+Rel(ExportJob, RatesDB, "Чтение")
+Rel(ExportJob, PartnerSystem, "Генерирует файл CSV/XML")
+
+@enduml
