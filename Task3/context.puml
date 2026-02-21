@@ -1,0 +1,28 @@
+@startuml
+title Deposit Opening — Context Diagram (MVP)
+
+top to bottom direction
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(Client, "Клиент", "Подаёт заявку на депозит через сайт или интернет-банк")
+Person(CallCenterAgent, "Менеджер кол-центра", "Созванивается с новым клиентом по заявке")
+Person(BackOffice, "Сотрудник бек-офиса", "Обрабатывает заявку и вносит депозит в АБС")
+
+System(Website, "Сайт", "Позволяет новым клиентам подать заявку")
+System(InternetBank, "Интернет-банк", "Позволяет существующим клиентам открыть депозит")
+System(DepositService, "Сервис заявок", "Обрабатывает заявки на депозиты, отправляет СМС и маршрутизирует обращение")
+System(SMSGateway, "СМС-шлюз", "Отправляет клиентам СМС-уведомления")
+System(ABS, "АБС", "Автоматизированная банковская система, в которой создаются депозиты вручную")
+
+Rel(Client, Website, "Подаёт заявку на депозит")
+Rel(Client, InternetBank, "Открывает депозит онлайн")
+
+Rel(Website, DepositService, "Передаёт заявку на депозит")
+Rel(InternetBank, DepositService, "Передаёт заявку на депозит")
+
+Rel(DepositService, CallCenterAgent, "Отображает заявку для звонка")
+Rel(DepositService, BackOffice, "Отображает заявку для обработки")
+Rel(DepositService, SMSGateway, "Отправляет СМС-уведомление")
+Rel(BackOffice, ABS, "Ручной ввод депозита")
+
+@enduml
